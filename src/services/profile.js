@@ -21,4 +21,15 @@ export const profileService = {
         if (error) throw error
         return data
     },
+    async search(query, excludeId) {
+        const { data, error } = await supabase
+            .from('profiles')
+            .select('*')
+            .ilike('display_name', `%${query}%`)
+            .neq('id', excludeId)
+            .limit(10)
+
+        if (error) throw error
+        return data
+    }
 }
