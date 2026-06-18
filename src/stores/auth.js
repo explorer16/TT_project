@@ -7,6 +7,7 @@ export const useAuthStore = defineStore('auth', {
     state: () => ({
         user: null,
         session: null,
+        profile: null,
         loading: true
     }),
     getters: {
@@ -20,22 +21,23 @@ export const useAuthStore = defineStore('auth', {
             this.user = data.session?.user || null
 
             this.loading = false
+
+            if (this.user && !this.profile) {
+                await this.ensureProfile(this.user)
+            }
         },
         initAuth() {
             supabase.auth.onAuthStateChange(async (event, session) => {
                 this.session = session
                 this.user = session?.user || null
-                if (this.user) {
-                    router.push('/chat')
-                }
             })
         },
         async ensureProfile(user) {
-            console.log('ensureProfile', user)
-            const existing = await profileService.getById(user.id)
-            console.log('ensureProfile', existing)
-            if (!existing) {
-                await profileService.create({
+            const existing = await profileService.getById(user.id);
+            if (existing) {
+                this.profile = existing
+            } else {
+                this.profile = await profileService.create({
                     id: user.id,
                     display_name: user.user_metadata?.full_name || 'User',
                     avatar_url: user.user_metadata?.avatar_url || null,
@@ -55,6 +57,7 @@ export const useAuthStore = defineStore('auth', {
             await supabase.auth.signOut()
             this.user = null
             this.session = null
+            router.push('/auth')
         }
     }
 })
