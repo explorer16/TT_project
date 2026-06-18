@@ -2,6 +2,7 @@
 import { onMounted } from 'vue'
 import { supabase } from '../../services/supabase'
 import { useRouter } from 'vue-router'
+import { useAuthStore } from "../../stores/auth.js";
 
 const router = useRouter()
 
@@ -12,7 +13,11 @@ onMounted(async () => {
 
   const { data: sessionData } = await supabase.auth.getSession()
 
-  if (sessionData?.session) {
+  if (sessionData?.session && !error) {
+    const user = sessionData.session.user;
+    const auth = useAuthStore()
+    await auth.ensureProfile(user);
+
     router.replace('/chat')
   } else {
     router.replace('/auth')

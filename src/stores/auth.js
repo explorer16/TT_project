@@ -26,13 +26,14 @@ export const useAuthStore = defineStore('auth', {
                 this.session = session
                 this.user = session?.user || null
                 if (this.user) {
-                    await this.ensureProfile(this.user)
                     router.push('/chat')
                 }
             })
         },
         async ensureProfile(user) {
+            console.log('ensureProfile', user)
             const existing = await profileService.getById(user.id)
+            console.log('ensureProfile', existing)
             if (!existing) {
                 await profileService.create({
                     id: user.id,
@@ -46,7 +47,7 @@ export const useAuthStore = defineStore('auth', {
             await supabase.auth.signInWithOAuth({
                 provider: 'google',
                 options: {
-                    redirectTo: 'http://localhost:5174/auth/callback',
+                    redirectTo: 'http://localhost:5173/auth/callback',
                 }
             })
         },
