@@ -53,6 +53,14 @@ export const useAuthStore = defineStore('auth', {
                 }
             })
         },
+        async loginWithGithub() {
+            await supabase.auth.signInWithOAuth({
+                provider: 'github',
+                options: {
+                    redirectTo: 'http://localhost:5173/auth/callback',
+                }
+            })
+        },
         async logout() {
             await supabase.auth.signOut()
             this.user = null
