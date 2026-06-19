@@ -19,6 +19,8 @@ export const ConversationService = {
        return data
     },
     async getAll() {
+        const { data: { user } } = await supabase.auth.getUser()
+        console.log('Current supabase user:', user?.id)
         const {data, error} = await supabase
             .from('conversations')
             .select()

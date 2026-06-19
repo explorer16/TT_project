@@ -2,6 +2,7 @@
 import ChatNavbar from "../../components/ChatNavbar.vue";
 import {ref} from "vue";
 import ConversationList from "../../components/ConversationList.vue";
+import ChatWindow from "../../components/ChatWindow.vue";
 
 const selectedConversation = ref(null);
 </script>
@@ -11,12 +12,15 @@ const selectedConversation = ref(null);
     <ChatNavbar :conversation-name="selectedConversation?.name" />
     <div class="chat-body">
       <ConversationList @select="selectedConversation = $event" />
-
+      <ChatWindow v-if="selectedConversation" :conversation-id="selectedConversation.id"/>
     </div>
   </div>
 </template>
 
 <style scoped>
+.chat-window {
+  flex: 1;
+}
 .chat-page {
   height: 100vh;
   display: flex;

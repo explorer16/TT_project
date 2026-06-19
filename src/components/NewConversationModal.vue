@@ -33,12 +33,12 @@ const createConversation = async () => {
   })
   await ConversationService.addMember({
     conversation_id: conversation.id,
-    user_id: auth.user.id,
+    profile_id: auth.user.id,
   })
   for (const userId of selectedUsers.value) {
     await ConversationService.addMember({
       conversation_id: conversation.id,
-      user_id: userId,
+      profile_id: userId,
     })
   }
   emit("created", conversation)
