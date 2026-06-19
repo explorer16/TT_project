@@ -11,7 +11,7 @@ const selectedConversation = ref(null);
   <div class="chat-page">
     <ChatNavbar :conversation-name="selectedConversation?.name" />
     <div class="chat-body">
-      <ConversationList @select="selectedConversation = $event" />
+      <ConversationList :selected-id="selectedConversation?.id" @select="selectedConversation = $event" />
       <ChatWindow v-if="selectedConversation" :conversation-id="selectedConversation.id"/>
     </div>
   </div>
