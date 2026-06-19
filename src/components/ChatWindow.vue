@@ -4,6 +4,7 @@ import {supabase} from "../services/supabase.js";
 import {messageService} from "../services/message.js";
 import {useAuthStore} from "../stores/auth.js";
 import {profileService} from "../services/profile.js";
+import { commandService } from "../services/commands/index.js";
 
 const auth = useAuthStore()
 const newMessage = ref('')
@@ -30,11 +31,21 @@ watch(() => props.conversationId, async (newId) => {
   subscribeToMessages()
 })
 const send = async () => {
-  await messageService.create({
-    conversation_id: props.conversationId,
-    sender_id: auth.user.id,
-    content: newMessage.value
+  const content = newMessage.value.trim()
+  if (!content) return
+
+  const handled = await commandService.execute(content, {
+    conversationId: props.conversationId,
+    senderId: auth.user.id,
   })
+
+  if (!handled) {
+    await messageService.create({
+      conversation_id: props.conversationId,
+      sender_id: auth.user.id,
+      content: content
+    })
+  }
   newMessage.value = ''
 }
 const subscribeToMessages = () => {
